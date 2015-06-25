@@ -19,6 +19,7 @@ class User(Base):
 	currentMoney = Column(Float)
 	wins = Column(Int)
 	losses = Column(Int)
+	netProfit = Column(Float)
 
 class Match(Base):
 	__tablename__ = "matches"
