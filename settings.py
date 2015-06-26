@@ -9,4 +9,6 @@ DATABASE = {
 
 REDDIT = {
 	'username': '',
-	'password': '',}
+	'password': '',
+	'clientID': '',
+	'secret': ''}
