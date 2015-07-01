@@ -1,9 +1,13 @@
 import praw
 import requests, requests.auth
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from sqlalchemy.exc import IntegrityError
 from mySettings import REDDIT as config
+from databases import *
 
 SCOPES = set(['edit','identity','privatemessages','read','submit'])
-BOT_COMMANDS = {'bet':bet, 'check':check}
+BOT_COMMANDS = ['bet','check']
 
 def getToken():
 	client_auth = requests.auth.HTTPBasicAuth(config['clientID'], config['secret'])
@@ -27,27 +31,94 @@ def crawlSubmissions():
 	commentCommands = {}
 
 	for match in matches:
-		flat_comments = praw.helpers.flatten_tree(match.comments)
-		botNamed = [comment for comment in flat_comments if ("!"+config['username']).lower() in comment.body.lower()]
+		match.replace_more_comments(limit=None)
+		flatComments = praw.helpers.flatten_tree(match.comments)
+		botNamed = [comment for comment in flatComments if ("!"+config['username']).lower() in comment.body.lower()]
 		for named in botNamed:
-			if any("!"+config['username']+" "+command in named.body.lower() for command in BOT_COMMANDS.values()):
-				commentCommands[comment]=command
+			if any("!"+config['username']+" "+command in named.body.lower() for command in BOT_COMMANDS):
+				botNameIndex = named.body.lower().split().index("!"+config['username'])
+				command = splitComment[botNameIndex + 1]
+				commentCommands[named]=command
 
 	return commentCommands
 
-def bet(comment): ###Update database
-#Takes in comment, needs to parse string for amount/team, look for CSGL link in original submission, update databases
-#UPDATE THE BET TABLE AND MATCHES TABLE - will update the other table later on based on csgolounge api
-#NEED TO IMPORT sessionmaker, etc FOR DATABASE COMMUNICATION
+def bet(comment, session):
+	submissionText = comment.submission.selftext
 
-
-def check(comment): ###PM user with their info
-#Checks database for that username, sends a PM with info formatted
-
+	try:	
+		csglIndex = submissionText.index("[CSGL]")
+	except ValueError:
+		print "Submission does not contain any CSGL reference"
+		return 
+	
+	csgoloungeLinkGeneric = "(http://csgolounge.com/match?m="
+	
+	if csgoloungeLinkGeneric in submissionText and (submissionText.indexcsgoloungeLinkGeneric) == csglIndex+1:
+		matchID = int(submissionText[submissionText.index(csgoloungelinkGeneric)+1:submissionText.index(csgoloungelinkGeneric)+5])
+		newMatch = Match(id = matchId, adjusted = False)
 		
-def processCommands(commands):
-	for comment,command in commands.iteritems()
-		commands[comment](comment)
+		try:
+			session.add(newMatch)
+			session.commit()
+		except IntegrityError:
+			pass
+
+	splitComment = comment.body.lower().split()
+	
+	botNameIndex = splitComment.index("!"+config['username'])
+	betString = splitComment.index(botNameIndex + 2)
+	teamString = splitComment.index(botNameIndex + 3).lower()
+	
+	try:	
+		betAmount = float(betString)
+	except ValueError:
+		print "User did not provide a float as a bet"
+		return 
+
+	newBet = Bet(commentId = comment.id, matchId = matchID, team = teamString, amount = betAmount)
+	try:
+		session.add(newBet)
+		session.commit()
+	except IntegrityError:
+		pass
+
+	
+	try:
+		author = comment.author.name
+	except:
+		pass
+		return
+	newUser = User(username = author, currentMoney = 0, wins = 0, losses = 0, netProfit = 0)
+	try:
+		session.add(newUser)
+		session.commit()
+	except IntegrityError:
+		pass
+	
+
+def check(comment, session):
+	try:
+		userName = comment.author.name
+	except:
+		pass
+		return
+
+	try:
+		user = session.query(User).filter(User.username == userName).one()
+		subject = "Your Simulated Betting Status"
+		message = "%s, you currently have %i wins and %i losses. The amount of money that you currently have is %f, and your net" 				"profit as of now is %f." % (user.username, user.wins, user.losses, user.currentMoney, user.netProfit)
+	except (MultipleResultsFound, NoResultFound):
+		subject = "There was a problem fetching your status..."
+		message = "The bot was unable to fetch your information. Please make sure that you have made at least on bet, and that the" 				"match for that bet has already been completed."	
+
+	r.send_message(userName, subject, message)
+	
+def processCommands(commands, session):
+	for comment,command in commands.iteritems():
+		if command == 'bet':
+			bet(comment, session)
+		if command == 'check':
+			check(comment, session)
 
 
 

@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine.url import URL
-from sqlalchemy.orm import sessionmaker
 import mySettings
 
 def createEngine():
@@ -17,21 +16,21 @@ class User(Base):
 
 	username = Column(String, primary_key=True)
 	currentMoney = Column(Float)
-	wins = Column(Int)
-	losses = Column(Int)
+	wins = Column(Integer)
+	losses = Column(Integer)
 	netProfit = Column(Float)
 
 class Match(Base):
 	__tablename__ = "matches"
 	
-	id = Column(Int, primary_key=True)
+	id = Column(Integer, primary_key=True)
 	adjusted = Column(Boolean)
 
 class Bet(Base):
 	__tablename__ = "bets"
 
-	commentID = Column(String, primary_key=True)
-	matchId = Column(Int)
+	commentId = Column(String, primary_key=True)
+	matchId = Column(Integer)
 	team = Column(String)
 	amount = Column(Float)
 	
