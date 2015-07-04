@@ -51,7 +51,7 @@ def adjust(toBeAdjusted, session):
 		except:
 			session.rollback()
 
-def getMultipler(matchDict, bet):
+def getMultiplier(matchDict, bet):
 	matchStats = requests.get("http://csgolounge.com/api/matches").json()[2500:]
 	for stat in matchStats:
 		if stat['match'] == matchDict['match']:
