@@ -62,6 +62,23 @@ def bet(comment, session):
 			session.commit()
 		except IntegrityError:
 			pass
+		except:
+			session.rollback()
+
+	try:
+		author = comment.author.name
+	except:
+		pass
+		return
+	newUser = User(username = author, currentMoney = 0, wins = 0, losses = 0, netProfit = 0)
+	try:
+		session.add(newUser)
+		session.commit()
+	except IntegrityError:
+		pass
+	except:
+		session.rollback()
+
 
 	splitComment = comment.body.lower().split()
 	
@@ -75,25 +92,14 @@ def bet(comment, session):
 		print "User did not provide a float as a bet"
 		return 
 
-	newBet = Bet(commentId = comment.id, matchId = matchID, team = teamString, amount = betAmount)
+	newBet = Bet(commentId = comment.id, user = author, matchId = matchID, team = teamString, amount = betAmount)
 	try:
 		session.add(newBet)
 		session.commit()
 	except IntegrityError:
 		pass
-
-	
-	try:
-		author = comment.author.name
 	except:
-		pass
-		return
-	newUser = User(username = author, currentMoney = 0, wins = 0, losses = 0, netProfit = 0)
-	try:
-		session.add(newUser)
-		session.commit()
-	except IntegrityError:
-		pass
+		session.rollback()
 	
 
 def check(comment, session):

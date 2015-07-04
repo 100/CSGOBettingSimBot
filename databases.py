@@ -30,6 +30,7 @@ class Bet(Base):
 	__tablename__ = "bets"
 
 	commentId = Column(String, primary_key=True)
+	user = Column(String)
 	matchId = Column(Integer)
 	team = Column(String)
 	amount = Column(Float)
