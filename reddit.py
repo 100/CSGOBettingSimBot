@@ -115,7 +115,7 @@ def check(comment, session):
 		message = "%s, you currently have %i wins and %i losses. The amount of money that you currently have is %f, and your net" 				"profit as of now is %f." % (user.username, user.wins, user.losses, user.currentMoney, user.netProfit)
 	except (MultipleResultsFound, NoResultFound):
 		subject = "There was a problem fetching your status..."
-		message = "The bot was unable to fetch your information. Please make sure that you have made at least on bet, and that the" 				"match for that bet has already been completed."	
+		message = "The bot was unable to fetch your information. Please make sure that you have made at least one bet, and that the" 				"match for that bet has already been completed."	
 
 	r.send_message(userName, subject, message)
 	
