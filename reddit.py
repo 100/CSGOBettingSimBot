@@ -131,7 +131,7 @@ def processCommands(commands, session):
 		if command == 'bet':
 			bet(comment, session)
 		if command == 'check':
-			check(comment, session)
+			check(comment, session, createPRAW())
 
 
 
