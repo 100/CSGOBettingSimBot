@@ -35,11 +35,11 @@ def crawlSubmissions():
 		flatComments = praw.helpers.flatten_tree(match.comments)
 		botNamed = [comment for comment in flatComments if ("!"+config['username']).lower() in comment.body.lower()]
 		for named in botNamed:
-			if any("!"+config['username']+" "+command in named.body.lower() for command in BOT_COMMANDS):
-				botNameIndex = named.body.lower().split().index("!"+config['username'])
+			if any("!"+config['username'].lower()+" "+command in named.body.lower() for command in BOT_COMMANDS):
+				splitComment = named.body.lower().split()
+				botNameIndex = splitComment.index("!"+config['username'].lower())
 				command = splitComment[botNameIndex + 1]
-				commentCommands[named]=command
-
+				commentCommands[named]=command	
 	return commentCommands
 
 def bet(comment, session):
@@ -53,9 +53,11 @@ def bet(comment, session):
 	
 	csgoloungeLinkGeneric = "(http://csgolounge.com/match?m="
 	
-	if csgoloungeLinkGeneric in submissionText and (submissionText.indexcsgoloungeLinkGeneric) == csglIndex+1:
-		matchID = int(submissionText[submissionText.index(csgoloungelinkGeneric)+1:submissionText.index(csgoloungelinkGeneric)+5])
-		newMatch = Match(id = matchId, adjusted = False)
+	if csgoloungeLinkGeneric in submissionText and submissionText.index(csgoloungeLinkGeneric) == csglIndex+6:
+		beginningAddition= len(csgoloungeLinkGeneric)
+		matchIdBeginning = submissionText.index(csgoloungeLinkGeneric)+beginningAddition
+		matchID = int(submissionText[matchIdBeginning: matchIdBeginning+4])
+		newMatch = Match(id = matchID, adjusted = False)
 		
 		try:
 			session.add(newMatch)
@@ -82,9 +84,9 @@ def bet(comment, session):
 
 	splitComment = comment.body.lower().split()
 	
-	botNameIndex = splitComment.index("!"+config['username'])
-	betString = splitComment.index(botNameIndex + 2)
-	teamString = splitComment.index(botNameIndex + 3).lower()
+	botNameIndex = splitComment.index("!"+config['username'].lower())
+	betString = splitComment[botNameIndex + 2]
+	teamString = splitComment[botNameIndex + 3].lower()
 	
 	try:	
 		betAmount = float(betString)

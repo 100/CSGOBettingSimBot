@@ -5,7 +5,7 @@ import requests
 def getToBeAdjusted(session):
 	matchList = requests.get("http://csgolounge.com/api/matches")	
 
-	unadjusted = session.query(User).filter(Match.adjusted == False).all()
+	unadjusted = session.query(Match).filter(Match.adjusted == False).all()
 	toBeAdjusted = {}		
 	for unadjustedMatch in unadjusted:
 		for match in matchList.json()[2500:]:
