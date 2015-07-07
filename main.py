@@ -11,3 +11,5 @@ def main():
 
 	processCommands(crawlSubmissions(), session)
 	adjust(getToBeAdjusted(session), session)
+
+main()
