@@ -54,7 +54,7 @@ def adjust(toBeAdjusted, session):
 			session.rollback()
 
 def getMultiplier(matchDict, bet):
-	matchStats = requests.get("http://csgolounge.com/api/matches").json()[2500:]
+	matchStats = requests.get("http://csgolounge.com/api/matches_stats").json()[2500:]
 	for stat in matchStats:
 		if stat['match'] == matchDict['match']:
 			if bet.team.lower() == matchDict['a'].lower():
