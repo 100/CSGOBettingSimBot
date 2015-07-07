@@ -7,7 +7,8 @@ from sqlalchemy.orm import sessionmaker
 def main():
 	engine = createEngine()
 	createTables(engine)
-	session = sessionmaker(bind=engine)
+	sessionMaker = sessionmaker(bind=engine)
+	session = sessionMaker()
 
 	processCommands(crawlSubmissions(), session)
 	adjust(getToBeAdjusted(session), session)

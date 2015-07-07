@@ -1,4 +1,6 @@
+from databases import *
 import requests
+
 
 def getToBeAdjusted(session):
 	matchList = requests.get("http://csgolounge.com/api/matches")	

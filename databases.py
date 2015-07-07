@@ -14,7 +14,7 @@ def createTables(engine):
 class User(Base):
 	__tablename__ = "users"
 
-	username = Column(String, primary_key=True)
+	username = Column(String(50), primary_key=True)
 	currentMoney = Column(Float)
 	wins = Column(Integer)
 	losses = Column(Integer)
@@ -29,10 +29,10 @@ class Match(Base):
 class Bet(Base):
 	__tablename__ = "bets"
 
-	commentId = Column(String, primary_key=True)
-	user = Column(String)
+	commentId = Column(String(50), primary_key=True)
+	user = Column(String(50))
 	matchId = Column(Integer)
-	team = Column(String)
+	team = Column(String(50))
 	amount = Column(Float)
 	
 
