@@ -63,6 +63,7 @@ def bet(comment, session):
 			session.add(newMatch)
 			session.commit()
 		except IntegrityError:
+			session.rollback()
 			pass
 		except:
 			session.rollback()
@@ -77,6 +78,7 @@ def bet(comment, session):
 		session.add(newUser)
 		session.commit()
 	except IntegrityError:
+		session.rollback()		
 		pass
 	except:
 		session.rollback()
@@ -99,6 +101,7 @@ def bet(comment, session):
 		session.add(newBet)
 		session.commit()
 	except IntegrityError:
+		session.rollback()		
 		pass
 	except:
 		session.rollback()
