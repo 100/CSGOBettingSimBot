@@ -1,5 +1,5 @@
 from mySettings import *
-from databses import *
+from databases import *
 from reddit import *
 from checkResults import *
 from sqlalchemy.orm import sessionmaker
