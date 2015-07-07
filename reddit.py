@@ -107,7 +107,9 @@ def bet(comment, session):
 		session.rollback()
 	
 
-def check(comment, session):
+def check(comment, session, praw):
+	r = praw
+
 	try:
 		userName = comment.author.name
 	except:
