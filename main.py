@@ -13,6 +13,5 @@ def main():
 	processCommands(crawlSubmissions(), session)
 	adjust(getToBeAdjusted(session), session)
 
-	print session.query(Bet).all()
 
 main()
